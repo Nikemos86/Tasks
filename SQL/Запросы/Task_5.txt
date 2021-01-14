@@ -1,0 +1,11 @@
+SELECT post_id FROM (
+	SELECT COUNT(l.user_id) AS likes_count, l.post_id  FROM Likes As l
+	JOIN Friends AS fr
+	ON fr.friend_id = l.user_id
+	WHERE fr.user_id = 1
+	GROUP BY post_id
+) AS t
+WHERE post_id NOT IN (
+	SELECT post_id FROM Likes 
+	WHERE user_id = 1
+) ORDER BY likes_count DESC

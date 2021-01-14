@@ -1,0 +1,8 @@
+SELECT cu.FIO, pr.product FROM Customers AS cu JOIN (
+	SELECT cust_id, prod_id, RANK()OVER(PARTITION BY cust_id ORDER BY cust_id, spending DESC) AS sort FROM (
+		SELECT DISTINCT *, SUM(price*quantity)OVER(PARTITION BY cust_id,prod_id) AS spending FROM Orders
+		WHERE dat BETWEEN '1.1.2020' AND '31.12.2020'
+	) AS Orders
+) AS o ON cu.id = o.cust_id
+JOIN Products AS pr ON pr.id = o.prod_id
+WHERE o.sort <=2 ORDER BY o.cust_id, o.sort;

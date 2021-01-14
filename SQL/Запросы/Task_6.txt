@@ -1,0 +1,12 @@
+SELECT tr.client_id, tr.report_date, tr.txn_amount / rs.CCY_rate AS usd FROM (
+	SELECT client_id, txn_amount, Report_date,  
+	CASE 
+		WHEN Report_date BETWEEN '1.1.2021' AND '10.1.2021' THEN '31.12.2020'
+		-- Другие праздники, проверки на соответствующие даты
+		WHEN EXTRACT(dow FROM Report_date) = 0 THEN Report_date - Interval '2 DAY'
+		WHEN EXTRACT(dow FROM Report_date) = 6 THEN Report_date - Interval '1 DAY'
+		ELSE Report_date
+	END AS curr_date
+FROM Transactions
+) AS tr
+JOIN Rates rs ON rs.CCY_code = 840 AND tr.curr_date = rs.Report_date ORDER BY client_id;

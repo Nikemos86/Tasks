@@ -1,0 +1,4 @@
+SELECT DISTINCT dep, MAX(salary) OVER (PARTITION BY dep) AS MAXIMUM FROM ( 
+	SELECT managers.salary, department.dep FROM managers
+	RIGHT JOIN department ON managers.dep = department.id
+	) AS MAXIMUM;
